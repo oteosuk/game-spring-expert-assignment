@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+// TODO Lv 2: 제공된 SQL과 같은 인덱스를 선언합니다.
 @Table(name = "chat_messages", indexes = {
         @Index(name = "idx_chat_world_created_at", columnList = "world_id, created_at")
 })
