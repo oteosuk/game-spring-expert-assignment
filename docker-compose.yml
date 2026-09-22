@@ -2,6 +2,7 @@ services:
   mysql:
     image: mysql:8.0
     container_name: webcraft-mysql
+    command: --log-bin-trust-function-creators=1
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: webcraft
@@ -27,6 +28,40 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  app-a:
+    build: .
+    container_name: webcraft-app-a
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/webcraft
+      SPRING_DATASOURCE_USERNAME: webcraft
+      SPRING_DATASOURCE_PASSWORD: webcraft
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  app-b:
+    build: .
+    container_name: webcraft-app-b
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/webcraft
+      SPRING_DATASOURCE_USERNAME: webcraft
+      SPRING_DATASOURCE_PASSWORD: webcraft
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   mysql-data:
